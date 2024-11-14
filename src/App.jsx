@@ -8,6 +8,7 @@ import Favorites from "./components/Favorites";
 import Logo from "./assets/icons/logo.webp";
 
 const fetchComics = async (limit, offset) => {
+  // Función encargada de obtener los comics.
   const publicKey = "02b99a8d0327ececdcfd954443ab9da8";
   const privateKey = "7841f6cf0855fc40eab8f906d524e610773b0a49";
   const ts = "1";
@@ -26,21 +27,27 @@ const fetchComics = async (limit, offset) => {
 };
 
 export default function App() {
+  // Se usan dos States principales, el que guarda los comics y el que guarda los favoritos.
   const [comics, setComics] = useState([]);
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState(() => {
+    const savedFavorites = localStorage.getItem("favorites"); // Los favoritos se obtienen de LocalStorage al cargar la página.
+    return savedFavorites ? JSON.parse(savedFavorites) : [];
+  });
 
   const toggleFavorite = (comic) => {
+    // Función llamada al alterar los favoritos (y la funcionalidad del corazón).
     setFavorites((prevFavorites) => {
-      if (prevFavorites.some((fav) => fav.id === comic.id)) {
-        return prevFavorites.filter((fav) => fav.id !== comic.id);
-      } else {
-        return [...prevFavorites, comic];
-      }
+      const updatedFavorites = prevFavorites.some((fav) => fav.id === comic.id) // Revisa que no haya coincidencias.
+        ? prevFavorites.filter((fav) => fav.id !== comic.id)
+        : [...prevFavorites, comic];
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites)); // En el caso de que ya no esté, lo añade al LocalStorage.
+      return updatedFavorites;
     });
   };
 
   useEffect(() => {
     const getComics = async () => {
+      // Obtiene los comics de forma asincrona.
       const results = await fetchComics(30, 0);
       setComics(results);
     };
@@ -49,6 +56,7 @@ export default function App() {
   }, []);
 
   return (
+    // Sistema artificial de páginas para poder usar elementos React como páginas independientes.
     <Router>
       <img src={Logo} className="logo" alt="" />
       <header>

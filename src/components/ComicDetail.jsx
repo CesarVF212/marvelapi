@@ -7,11 +7,12 @@ import like_on from "./../assets/icons/like_on.png";
 import "./../App.css";
 
 export default function ComicDetail({ toggleFavorite, favorites }) {
+  // No se hace el fetch de la información detallada de los comics hasta que no se entra a verlo.
   const location = useLocation();
   const { comic } = location.state;
 
   const [characters, setCharacters] = useState([]);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false); // Para facilitarnos el trabajo, tenemos otro state para el control del corazón.
 
   const fetchCharacters = async (comicID, limit = 20, offset = 0) => {
     const publicKey = "02b99a8d0327ececdcfd954443ab9da8";
@@ -61,7 +62,7 @@ export default function ComicDetail({ toggleFavorite, favorites }) {
       <span>
         <h2>{comic.title}</h2>
         <img
-          onClick={handleLikeClick}
+          onClick={handleLikeClick} // Llama a la función que decide que icono mostrar, el de favorito o el que no.
           src={isFavorite ? like_on : like_off}
           className="favIcon"
           alt={isFavorite ? "Favorite" : "Not Favorite"}
